@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108" role="img" aria-label="Glad logo">
+  <defs>
+    <linearGradient id="g" x1="36" y1="32" x2="72" y2="76" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFC857"/>
+      <stop offset="1" stop-color="#FF5E8A"/>
+    </linearGradient>
+  </defs>
+  <rect width="108" height="108" rx="26" fill="#140F22"/>
+  <circle cx="54" cy="54" r="30" fill="url(#g)" opacity=".16"/>
+  <circle cx="54" cy="54" r="22" fill="url(#g)"/>
+  <circle cx="47.5" cy="50" r="3" fill="#1A1226"/>
+  <circle cx="60.5" cy="50" r="3" fill="#1A1226"/>
+  <path d="M43.5 58.5 Q54 70.5 64.5 58.5" fill="none" stroke="#1A1226" stroke-width="3.6" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="glad_bg">#FF0D0A14</color>
+    <color name="glad_surface">#FF1D1829</color>
+    <color name="glad_text">#FFEFEAF8</color>
+    <color name="glad_text_dim">#FFB4ACC6</color>
+    <color name="glad_accent">#FFFFB84D</color>
+    <color name="ic_background">#FF140F22</color>
+</resources>
