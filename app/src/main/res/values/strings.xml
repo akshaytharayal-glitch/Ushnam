@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Glad</string>
+    <string name="widget_dashboard_label">Glad Today</string>
+    <string name="widget_shortcuts_label">Glad Shortcuts</string>
+    <string name="widget_desc_dashboard">Time, date and your watch stats</string>
+    <string name="widget_desc_shortcuts">One-tap shortcuts to wallpapers, anime, music and games</string>
+</resources>

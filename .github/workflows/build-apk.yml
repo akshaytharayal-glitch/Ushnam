@@ -1,0 +1,74 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+      - ".github/workflows/build-apk.yml"
+  pull_request:
+    paths:
+      - "app/**"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      GLAD_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      GLAD_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      GLAD_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Decode release keystore (only when secrets are configured)
+        id: signing
+        run: |
+          if [ -n "$KEYSTORE_B64" ] && [ -n "$GLAD_KEYSTORE_PASSWORD" ] && [ -n "$GLAD_KEY_ALIAS" ] && [ -n "$GLAD_KEY_PASSWORD" ]; then
+            echo "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/glad-release.jks"
+            echo "GLAD_KEYSTORE_FILE=$RUNNER_TEMP/glad-release.jks" >> "$GITHUB_ENV"
+            echo "mode=release-signed" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=debug-signed" >> "$GITHUB_OUTPUT"
+            echo "::notice::Release signing secrets not set. The release APK will be signed with the debug key (fine for testing, not for the Play Store)."
+          fi
+
+      - name: Build debug and release APKs
+        run: gradle :app:assembleDebug :app:assembleRelease -PgladVersionCode=${{ github.run_number }} --stacktrace
+
+      - name: Name the APKs
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk dist/Glad-debug.apk
+          cp app/build/outputs/apk/release/app-release.apk "dist/Glad-release-${{ steps.signing.outputs.mode }}.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Glad-apks-${{ steps.signing.outputs.mode }}
+          path: dist/*.apk
+          if-no-files-found: error
+          retention-days: 30
